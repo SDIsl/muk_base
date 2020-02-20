@@ -1,19 +1,22 @@
 ###################################################################################
 #
-#    Copyright (C) 2018 MuK IT GmbH
+#    Copyright (c) 2017-2019 MuK IT GmbH.
+#
+#    This file is part of MuK Session Store 
+#    (see https://mukit.at).
 #
 #    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
+#    it under the terms of the GNU Lesser General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
 #
 #    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
+#    GNU Lesser General Public License for more details.
 #
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#    You should have received a copy of the GNU Lesser General Public License
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ###################################################################################
 
@@ -25,8 +28,8 @@ from odoo.http import request
 from odoo.tools.func import lazy_property
 
 from odoo.addons.muk_utils.tools.patch import monkey_patch
-from odoo.addons.muk_session_store.store import postgres
-from odoo.addons.muk_session_store.store import redis
+from odoo.addons.muk_session_store.store.postgres import PostgresSessionStore
+from odoo.addons.muk_session_store.store.redis import RedisSessionStore
 
 _logger = logging.getLogger(__name__)
 
@@ -79,9 +82,9 @@ class Root(http.Root):
     @lazy_property
     def session_store(self):
         if tools.config.get('session_store_database'):
-            return postgres.PostgresSessionStore(session_class=http.OpenERPSession)
+            return PostgresSessionStore(session_class=http.OpenERPSession)
         elif tools.config.get('session_store_redis') and redis:
-            return redis.RedisSessionStore(session_class=http.OpenERPSession)
+            return RedisSessionStore(session_class=http.OpenERPSession)
         return super(Root, self).session_store
     
 http.root = Root()
